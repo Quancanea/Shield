@@ -1,0 +1,41 @@
+public function prescribedrugs(Request $presdrug){
+    $validator = Validator::make($presdrug->all(), [
+        'consultclinic' => 'required|string',
+        'drugdiagnosis' => 'required|string',
+        'drugpassword' => 'required|string',
+    ]);
+    $getuser = new Getloggedinuserservice();
+    $getloggedinuser = $getuser->getuser();
+    if ($validator->fails()) {
+        return response()->json([
+        'error' => $validator->errors()->all()
+        ]);
+    }else{
+        
+        $lastapptid = DB::table('AllDrugPresc')->max('Presc_Num');
+        $newid = $lastapptid + 1;
+        foreach($presdrug->drugname as $key => $d){
+            return DB::table('AllDrugPresc')
+            ->insert([
+                'Presc_Num'=>$newid,
+                'Date'=>Carbon::now(),
+                'Time'=>date('H:i:s'),
+                'Drug_Id'=>$presdrug->drugid[$key],
+                'Drug_Name'=>$d,
+                'Prescription'=>$presdrug->drugprescription[$key],
+                'Hospital_No'=>'44455eee',
+                'Surname'=>'rrr',
+                'Other_Name'=>'rrr',
+                'Age'=>44,
+                'Sex'=>'ee',
+                'Account'=>'ee',
+                'Account_Category'=>'ddd',
+                'Clinic'=>$presdrug->consultclinic,
+                'Diagnosis'=>$presdrug->drugdiagnosis,
+                'Prescribed_By'=>'wwwe',
+                'Qty_given'=>2,
+                'Total_Cost'=>33
+            ]);
+        }
+    }
+}
